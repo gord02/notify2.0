@@ -58,6 +58,8 @@ def parsing_error(company):
     send_grid.client.mail.send.post(request_body=mail_json)
     
 def test_email():
+    print("here")
+    print("ket: ", SENDGRID_API_KEY)
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
 
     from_email = Email(sender)  

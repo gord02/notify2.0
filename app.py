@@ -4,15 +4,18 @@ import time
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from logic import notify
+
 app = Flask(__name__)
 
 # function to run web scrapping 
-def print_date_time():
-    print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+# def print_date_time():
+    # print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=print_date_time, trigger="interval", seconds=60)
+scheduler.add_job(func=notify.test_email, trigger="interval", seconds=60*2)
+# scheduler.add_job(func=print_date_time, trigger="interval", seconds=60)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app

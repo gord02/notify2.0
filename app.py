@@ -14,7 +14,8 @@ def print_date_time():
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=notify.test_email, trigger="interval", seconds=60*60*24)
+scheduler.add_job(func=notify.test_email, trigger="interval", hours=2)
+# scheduler.add_job(func=notify.test_email, trigger="interval", seconds=60*60*24)
 # scheduler.add_job(func=print_date_time, trigger="interval", seconds=60)
 scheduler.start()
 

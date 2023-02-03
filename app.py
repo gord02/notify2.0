@@ -2,7 +2,9 @@ from flask import Flask, render_template
 
 import time
 import atexit
+import logging
 from apscheduler.schedulers.background import BackgroundScheduler
+
 
 from logic import notify
 
@@ -11,10 +13,12 @@ app = Flask(__name__)
 # function to run web scrapping 
 def print_date_time():
     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    
+# logging.debug('This is a debug message')
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=notify.test_email, trigger="interval", hours=2)
+scheduler.add_job(func=notify.test_email, trigger="interval", minutes=2)
 # scheduler.add_job(func=notify.test_email, trigger="interval", seconds=60*60*24)
 # scheduler.add_job(func=print_date_time, trigger="interval", seconds=60)
 scheduler.start()

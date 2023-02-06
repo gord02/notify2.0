@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+import time
 import sendgrid
 import logging
 from email.message import EmailMessage
@@ -59,7 +60,7 @@ def parsing_error(company):
     send_grid.client.mail.send.post(request_body=mail_json)
     
 def test_email():
-    # print("here")
+    print("here")
     # print("ket: ", SENDGRID_API_KEY)
     logging.debug('This is a debug message')
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
@@ -69,7 +70,7 @@ def test_email():
 
     subject = "Company Updates"
     
-    message = "This is test message "
+    message = "This is test message " + time.strftime("%A, %d. %B %Y %I:%M:%S %p")
      
     content = Content("text/plain", message)
     mail = Mail(from_email, to_email, subject, content)

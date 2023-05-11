@@ -80,3 +80,44 @@ def test_email():
 
     # Send an HTTP POST request to /mail/send
     send_grid.client.mail.send.post(request_body=mail_json)
+    
+def emailConfirmation(email):
+    
+    send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
+
+    from_email = Email(sender)  
+    to_email = To(email)  
+
+    subject = "Notify - Please Confirm Joining"
+    
+    
+    # link = 
+    
+    
+    message = "Use the following link the confirm your addition to mailing list. " + time.strftime("%A, %d. %B %Y %I:%M:%S %p")
+     
+    content = Content("text/plain", message)
+    mail = Mail(from_email, to_email, subject, content)
+
+    # Get a JSON-ready representation of the Mail object
+    mail_json = mail.get()
+
+    # Send an HTTP POST request to /mail/send
+    send_grid.client.mail.send.post(request_body=mail_json)
+    
+
+def contact(email,name, msg):
+    send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
+
+    from_email = Email(email)  
+    to_email = To(receiver_email)  
+
+    subject = "Contact About Notify App"
+    content = Content("text/plain", msg)
+    mail = Mail(from_email, to_email, subject, content)
+
+    # Get a JSON-ready representation of the Mail object
+    mail_json = mail.get()
+
+    # Send an HTTP POST request to /mail/send
+    send_grid.client.mail.send.post(request_body=mail_json)

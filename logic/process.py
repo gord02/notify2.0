@@ -13,3 +13,8 @@ def wordScan(title):
     if "Intern" in title and "Engineer" in title:
         return True
 
+
+# testing:  
+# test dec to bin on 0,1,2,3,4,5,6,7
+
+# process number into binary and from each catergory, do specifc function call

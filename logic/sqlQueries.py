@@ -26,14 +26,18 @@ def create_database(connection, query):
         print(f"The error '{e}' occurred")
         
 def execute_query(connection, query):
-    cursor = connection.cursor()
+    res = False
+    cursor = connection.cursor(buffered=True)
     try:
         cursor.execute(query)
+        print("here")
         connection.commit()
         print("query executed successfully")
+        res = True
     except Error as e:
+        print(query)
         print(f"The error '{e}' occurred")
-
+    return res
 def query_companies(connection, query):
     cursor = connection.cursor()
     result = None
@@ -96,4 +100,33 @@ def update_company(company):
     """
     execute_query(connection, update)
 
+
+def isUser(email):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    query = f"""
+        SELECT email FROM users WHERE email = '{email}';
+    """
+    res = execute_query(connection, query)
+    return res
+    
+def createUser(email, jobTypes):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    query = f"""
+        INSERT INTO users (email, preferences) VALUES ('{email}', '{jobTypes}');
+    """
+    execute_query(connection, query)
+    
+    
+def updateUser(email, jobTypes):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    query = f"""
+        UPDATE users SET preferences = '{jobTypes}' WHERE email = '{email}';
+    """
+    execute_query(connection, query)
+    
+    
+# tests to:
+
+# that user is added, seen in db
+# test checking for user, there not there
 

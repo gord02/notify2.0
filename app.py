@@ -58,7 +58,7 @@ def index():
             
             appLogic.join(email, pref)
             # appLogic.confirm(email, type)
-            return redirect("/")
+            return redirect("/#subscribe")
 
     return render_template("index.html")
 

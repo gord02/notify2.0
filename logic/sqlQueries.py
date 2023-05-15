@@ -36,32 +36,19 @@ def execute_query(connection, query):
     except Error as e:
         print("the failed query: " , query)
         print(f"The error '{e}' occurred")
+    print()
     return result
 
-def query_companies(connection, query):
-    cursor = connection.cursor()
-    result = None  
+def execute_query_update(connection, query):
+    cursor = connection.cursor(buffered=True)
     try:
         cursor.execute(query)
-        result = cursor.fetchall()
+        connection.commit()
+        # print("query executed successfully")
     except Error as e:
         print("the failed query: " , query)
         print(f"The error '{e}' occurred")
-    return result
-    
-    
-def update_company_status(file_name):
-    connection = create_connection("localhost", "root", "", "checkon") 
-    
-    update_company = f"""
-        UPDATE
-        companies
-        SET
-        found = 1
-        where fileName = {file_name}
-      """
-    execute_query(connection, update_company)
-   
+
 
 def update_company(company):
     connection = create_connection("localhost", "root", "", "checkon") 
@@ -73,7 +60,7 @@ def update_company(company):
     WHERE
     company = '{company}';
     """
-    execute_query(connection, update)
+    execute_query_update(connection, update)
 
 
 def add_company(company, fileName):
@@ -81,7 +68,7 @@ def add_company(company, fileName):
     add=f""" INSERT INTO companies(company, fileName, found)
         VALUES ('{company}', '{fileName}', 0);
     """
-    execute_query(connection, add)
+    execute_query_update(connection, add)
     order_companies()
    
     
@@ -92,7 +79,7 @@ def reset_all_company_found():
         SET found = 0
         WHERE found = 1;
     """
-    execute_query(connection, update)
+    execute_query_update(connection, update)
     
     
 def reset_company_found(company):
@@ -102,7 +89,7 @@ def reset_company_found(company):
         SET found = 0
         WHERE Company = "{company}";
     """
-    execute_query(connection, update)
+    execute_query_update(connection, update)
     
     
 def order_companies():
@@ -120,13 +107,7 @@ def add_companies():
     ("PathAi", "pathAi.py", 0),
     ("Rippling", "rippling.py", 0);
     """
-    execute_query(connection, companies)
-    # order_companies()
-
-# reset_all_company_found()
-# add_company("Snowflake","snowflake.py")
-# reset_company_found("LinkedIn")
-# add_companies()
+    execute_query_update(connection, companies)
 
 
 def get_companies(): 
@@ -134,20 +115,7 @@ def get_companies():
     
     get_query = " SELECT * FROM companies WHERE found = 0 ORDER BY company;"
     # return list of tuples
-    return query_companies(connection, get_query)
-
-    
-def update_company(company):
-    connection = create_connection("localhost", "root", "", "checkon") 
-    update = f"""
-    UPDATE
-    companies
-    SET
-    found = 1
-    WHERE
-    company = '{company}'
-    """
-    execute_query(connection, update)
+    return execute_query(connection, get_query)
 
 
 def isUser(email):
@@ -174,7 +142,7 @@ def updateUser(email, jobTypes):
     query = f"""
         UPDATE users SET preferences = '{jobTypes}' WHERE email = '{email}';
     """
-    execute_query(connection, query)
+    execute_query_update(connection, query)
    
     
 def getUsers():
@@ -219,4 +187,10 @@ add_companies = """
 # print(isUser("gordon.hamilton1110@gmail.com"))
 # print(isUser("gordon@gmail.com"))
 
-update_company("Addepar")
+# update_company("Addepar")
+# reset_all_company_found()
+# add_company("Snowflake","snowflake.py")
+# reset_company_found("LinkedIn")
+# add_companies()
+# reset_all_company_found()
+

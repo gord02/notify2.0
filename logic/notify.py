@@ -7,7 +7,7 @@ import sendgrid
 from email.message import EmailMessage
 from sendgrid.helpers.mail import Mail, Email, To, Content
 
-from logic import sqlQueries
+import sqlQueries
 
 receiver_email = os.getenv('EMAIL')
 # password = os.getenv('PASSWORD')
@@ -33,6 +33,7 @@ def send_email(message):
 
         # Send an HTTP POST request to /mail/send
         send_grid.client.mail.send.post(request_body=mail_json)
+        print("sent email!")
     
     
 def parsing_error(company):
@@ -115,3 +116,5 @@ def contact(email,name, msg):
     send_grid.client.mail.send.post(request_body=mail_json)
     
 # send_email([["Google", "SWE"], ["reddit", "SWE"]])
+
+send_email("Test message")

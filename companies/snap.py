@@ -29,7 +29,7 @@ def get_data():
 
         elements = soup.select("th a")
         for element in elements:
-            jobs.add(element.contents[0])
+            jobs.append(element.contents[0])
 
     except Exception as e:
         # send email about scrapping error

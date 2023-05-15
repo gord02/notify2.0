@@ -20,7 +20,7 @@ app.debug = True
     # print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=main.check_on, trigger="interval", minutes=5)
+scheduler.add_job(func=main.check_on, trigger="interval", minutes=20)
 # scheduler.add_job(func=notify.test_email, trigger="interval", minutes=5)
 # scheduler.add_job(func=print_date_time, trigger="interval", minutes=5)
 # scheduler.add_job(func=notify.test_email, trigger="interval", seconds=60*60*24)

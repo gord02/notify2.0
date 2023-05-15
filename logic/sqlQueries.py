@@ -10,7 +10,7 @@ def create_connection(host_name, user_name, user_passwd, dm_name):
                                              passwd=user_passwd,
                                               database=dm_name
                                             )
-        print("connection to MySql DB successful")
+        # print("connection to MySql DB successful")
     except Error as e:
         print(f"The error '{e}' occurred")
     
@@ -30,25 +30,25 @@ def execute_query(connection, query):
     cursor = connection.cursor(buffered=True)
     try:
         cursor.execute(query)
-        print("here")
         connection.commit()
-        print("query executed successfully")
+        # print("query executed successfully")
         result = cursor.fetchall()
     except Error as e:
-        print(query)
+        print("the failed query: " , query)
         print(f"The error '{e}' occurred")
     return result
 
 def query_companies(connection, query):
     cursor = connection.cursor()
-    result = None
-    
+    result = None  
     try:
         cursor.execute(query)
         result = cursor.fetchall()
-        return result
     except Error as e:
+        print("the failed query: " , query)
         print(f"The error '{e}' occurred")
+    return result
+    
     
 def update_company_status(file_name):
     connection = create_connection("localhost", "root", "", "checkon") 
@@ -129,29 +129,10 @@ def add_companies():
 # add_companies()
 
 
-  
-db_query = "CREATE DATABASE checkon"
-table_create = """
-CREATE TABLE IF NOT EXISTS companies (
-    company TEXT,
-    fileName TEXT,
-    found INT
-)
-"""
-add_companies = """
-    INSERT INTO companies(company, fileName, found)
-    VALUES 
-    ("Snapchat", "snap.py", 0),
-    ("Addepar", "addepar.py", 0),
-    ("Quora", "quora.py", 0),
-    ("twoSigma", "twoSigma.py", 0),
-    ("Yelp", "yelp.py", 0);
-"""
-
 def get_companies(): 
     connection = create_connection("localhost", "root", "", "checkon") 
     
-    get_query = "SELECT * FROM companies WHERE found = 0"
+    get_query = " SELECT * FROM companies WHERE found = 0 ORDER BY company;"
     # return list of tuples
     return query_companies(connection, get_query)
 
@@ -175,7 +156,9 @@ def isUser(email):
         SELECT email FROM users WHERE email = '{email}';
     """
     res = execute_query(connection, query)
-    return res
+    if(len(res) == 0 ):
+        return False
+    return True
    
     
 def createUser(email, jobTypes):
@@ -202,6 +185,23 @@ def getUsers():
     return execute_query(connection, query)
 
 
+db_query = "CREATE DATABASE checkon"
+table_create = """
+CREATE TABLE IF NOT EXISTS companies (
+    company TEXT,
+    fileName TEXT,
+    found INT
+)
+"""
+add_companies = """
+    INSERT INTO companies(company, fileName, found)
+    VALUES 
+    ("Snapchat", "snap.py", 0),
+    ("Addepar", "addepar.py", 0),
+    ("Quora", "quora.py", 0),
+    ("twoSigma", "twoSigma.py", 0),
+    ("Yelp", "yelp.py", 0);
+"""
 # tests to:
 
 # that user is added, seen in db
@@ -210,3 +210,11 @@ def getUsers():
 # res = get_companies()
 # print(res)
 # print(res[0][1])
+
+
+# tests:
+
+# print(get_companies())
+# print(getUsers())
+# print(isUser("gordon.hamilton1110@gmail.com"))
+# print(isUser("gordon@gmail.com"))

@@ -26,7 +26,6 @@ def check_on():
     for file in company_files_names:
         # removing file extension
         name = file.split('.')[0]
-
         try: 
             # from the file name, get the file and import as module then access the getData() function which is the function name for scrapping all company webpages
             module = import_module("companies." +name)
@@ -45,7 +44,18 @@ def check_on():
     # if to_render is non empty, send email and render in frontend
     if len(to_render) > 0:
         print("Companies with job postings: " , len(to_render))
-        notify.send_email(to_render)
+        
+        message = ""
+        ln = "\n"
+        indent = '    '
+        for company in to_render:
+            company[0] = company[0].capitalize()
+            message += company[0] + ln
+            for i,job in enumerate(company):
+                if i>=1:
+                    message += indent + "- " + job + ln 
+            message += ln
+        
+        notify.send_email(message)
         # exec(open("app.py").read())
-    
 check_on()

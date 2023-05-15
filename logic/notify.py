@@ -7,40 +7,33 @@ import sendgrid
 from email.message import EmailMessage
 from sendgrid.helpers.mail import Mail, Email, To, Content
 
+from logic import sqlQueries
+
 receiver_email = os.getenv('EMAIL')
 # password = os.getenv('PASSWORD')
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 sender = os.getenv('SENDER')
 
-def send_email(data):
-    # print("data: ", data)
+def send_email(message):
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
-
+   
+    users = sqlQueries.getUsers()
+   
+    subject = "Notify Company Updates"
     from_email = Email(sender)  
-    to_email = To(receiver_email)  
-
-    subject = "Company Updates"
     
-    message = ""
-    ln = "\n"
-    indent = '    '
-    for company in data:
-        company[0] = company[0].capitalize()
-        message += company[0] + ln
-        for i,job in enumerate(company):
-           if i>=1:
-            message += indent + "- " + job + ln 
-        message += ln
-    # print(message)
+    for tuple in users:
+        email = tuple[0]
+        to_email = To(email)  
+        content = Content("text/plain", message)
+        mail = Mail(from_email, to_email, subject, content)
+
+        # Get a JSON-ready representation of the Mail object
+        mail_json = mail.get()
+
+        # Send an HTTP POST request to /mail/send
+        send_grid.client.mail.send.post(request_body=mail_json)
     
-    content = Content("text/plain", message)
-    mail = Mail(from_email, to_email, subject, content)
-
-    # Get a JSON-ready representation of the Mail object
-    mail_json = mail.get()
-
-    # Send an HTTP POST request to /mail/send
-    send_grid.client.mail.send.post(request_body=mail_json)
     
 def parsing_error(company):
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)

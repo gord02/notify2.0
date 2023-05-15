@@ -3,9 +3,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-import time
 import sendgrid
-import logging
 from email.message import EmailMessage
 from sendgrid.helpers.mail import Mail, Email, To, Content
 
@@ -15,7 +13,7 @@ SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 sender = os.getenv('SENDER')
 
 def send_email(data):
-    print("data: ", data)
+    # print("data: ", data)
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
 
     from_email = Email(sender)  
@@ -27,11 +25,14 @@ def send_email(data):
     ln = "\n"
     indent = '    '
     for company in data:
+        company[0] = company[0].capitalize()
         message += company[0] + ln
         for i,job in enumerate(company):
            if i>=1:
-            message += indent + "- " + job + ln
-     
+            message += indent + "- " + job + ln 
+        message += ln
+    # print(message)
+    
     content = Content("text/plain", message)
     mail = Mail(from_email, to_email, subject, content)
 
@@ -60,9 +61,6 @@ def parsing_error(company):
     send_grid.client.mail.send.post(request_body=mail_json)
     
 def test_email():
-    print("here")
-    # print("ket: ", SENDGRID_API_KEY)
-    logging.debug('This is a debug message')
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
 
     from_email = Email(sender)  
@@ -70,7 +68,7 @@ def test_email():
 
     subject = "Company Updates"
     
-    message = "This is test message " + time.strftime("%A, %d. %B %Y %I:%M:%S %p")
+    message = "This is test message "
      
     content = Content("text/plain", message)
     mail = Mail(from_email, to_email, subject, content)
@@ -81,6 +79,7 @@ def test_email():
     # Send an HTTP POST request to /mail/send
     send_grid.client.mail.send.post(request_body=mail_json)
     
+        
 def emailConfirmation(email):
     
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
@@ -112,7 +111,7 @@ def contact(email,name, msg):
     from_email = Email(email)  
     to_email = To(receiver_email)  
 
-    subject = "Contact About Notify App"
+    subject = f"Contact About Notify App - from {name}"
     content = Content("text/plain", msg)
     mail = Mail(from_email, to_email, subject, content)
 
@@ -121,3 +120,5 @@ def contact(email,name, msg):
 
     # Send an HTTP POST request to /mail/send
     send_grid.client.mail.send.post(request_body=mail_json)
+    
+# send_email([["Google", "SWE"], ["reddit", "SWE"]])

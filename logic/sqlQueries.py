@@ -26,18 +26,19 @@ def create_database(connection, query):
         print(f"The error '{e}' occurred")
         
 def execute_query(connection, query):
-    res = False
+    result = None
     cursor = connection.cursor(buffered=True)
     try:
         cursor.execute(query)
         print("here")
         connection.commit()
         print("query executed successfully")
-        res = True
+        result = cursor.fetchall()
     except Error as e:
         print(query)
         print(f"The error '{e}' occurred")
-    return res
+    return result
+
 def query_companies(connection, query):
     cursor = connection.cursor()
     result = None
@@ -61,6 +62,73 @@ def update_company_status(file_name):
       """
     execute_query(connection, update_company)
    
+
+def update_company(company):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    update = f"""
+    UPDATE
+    companies
+    SET
+    found = 1
+    WHERE
+    company = '{company}'
+    """
+    execute_query(connection, update)
+
+
+def add_company(company, fileName):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    add=f""" INSERT INTO companies(company, fileName, found)
+        VALUES ('{company}', '{fileName}', 0);
+    """
+    execute_query(connection, add)
+    order_companies()
+   
+    
+def reset_all_company_found():
+    connection = create_connection("localhost", "root", "", "checkon") 
+    
+    update=""" UPDATE companies
+        SET found = 0
+        WHERE found = 1;
+    """
+    execute_query(connection, update)
+    
+    
+def reset_company_found(company):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    
+    update=f""" UPDATE companies
+        SET found = 0
+        WHERE Company = "{company}";
+    """
+    execute_query(connection, update)
+    
+    
+def order_companies():
+    connection = create_connection("localhost", "root", "", "checkon") 
+    order="SELECT * FROM companies ORDER BY company;"
+    execute_query(connection, order)
+
+
+def add_companies():
+    connection = create_connection("localhost", "root", "", "checkon") 
+    
+    companies = """
+    INSERT INTO companies(company, fileName, found)
+    VALUES 
+    ("PathAi", "pathAi.py", 0),
+    ("Rippling", "rippling.py", 0);
+    """
+    execute_query(connection, companies)
+    # order_companies()
+
+# reset_all_company_found()
+# add_company("Snowflake","snowflake.py")
+# reset_company_found("LinkedIn")
+# add_companies()
+
+
   
 db_query = "CREATE DATABASE checkon"
 table_create = """
@@ -108,6 +176,7 @@ def isUser(email):
     """
     res = execute_query(connection, query)
     return res
+   
     
 def createUser(email, jobTypes):
     connection = create_connection("localhost", "root", "", "checkon") 
@@ -123,10 +192,21 @@ def updateUser(email, jobTypes):
         UPDATE users SET preferences = '{jobTypes}' WHERE email = '{email}';
     """
     execute_query(connection, query)
+   
     
-    
+def getUsers():
+    connection = create_connection("localhost", "root", "", "checkon") 
+    query = f"""
+        SELECT email, preferences FROM users;
+    """
+    return execute_query(connection, query)
+
+
 # tests to:
 
 # that user is added, seen in db
 # test checking for user, there not there
 
+# res = get_companies()
+# print(res)
+# print(res[0][1])

@@ -71,7 +71,7 @@ def update_company(company):
     SET
     found = 1
     WHERE
-    company = '{company}'
+    company = '{company}';
     """
     execute_query(connection, update)
 
@@ -218,3 +218,5 @@ add_companies = """
 # print(getUsers())
 # print(isUser("gordon.hamilton1110@gmail.com"))
 # print(isUser("gordon@gmail.com"))
+
+update_company("Addepar")

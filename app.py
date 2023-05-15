@@ -1,35 +1,34 @@
 from flask import Flask, render_template, redirect
 from flask import request
 
-# import time
-# import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+
+import time
+import atexit
 import logging
 
 import appLogic
-from logic import notify
-
-# from apscheduler.schedulers.background import BackgroundScheduler
-
-
-# from logic import notify
+from logic import notify 
+import main
 
 app = Flask(__name__)
 app.debug = True
 
-# # function to run web scrapping 
+# function to run web scrapping 
 # def print_date_time():
-#     app.logger.info(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
-#     # print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    # app.logger.info(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    # print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
-# scheduler = BackgroundScheduler()
-# # scheduler.add_job(func=notify.test_email, trigger="interval", minutes=2)
-# scheduler.add_job(func=print_date_time, trigger="interval", minutes=2)
-# # scheduler.add_job(func=notify.test_email, trigger="interval", seconds=60*60*24)
-# # scheduler.add_job(func=print_date_time, trigger="interval", seconds=60)
-# scheduler.start()
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=main.check_on, trigger="interval", minutes=5)
+# scheduler.add_job(func=notify.test_email, trigger="interval", minutes=5)
+# scheduler.add_job(func=print_date_time, trigger="interval", minutes=5)
+# scheduler.add_job(func=notify.test_email, trigger="interval", seconds=60*60*24)
+# scheduler.add_job(func=print_date_time, trigger="interval", seconds=60)
+scheduler.start()
 
 # Shut down the scheduler when exiting the app
-# atexit.register(lambda: scheduler.shutdown())
+atexit.register(lambda: scheduler.shutdown())
 
 
 @app.route("/", methods = ["GET", "POST"])

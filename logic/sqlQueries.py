@@ -1,19 +1,57 @@
 import mysql.connector
 from mysql.connector import Error
 
+import os
+# try:
+#     connection = mysql.connector.connect(host='localhost',
+#                                          database='checkon',
+#                                          user='root',
+#                                          password='')
+#     if connection.is_connected():
+#         db_Info = connection.get_server_info()
+#         print("Connected to MySQL Server version ", db_Info)
+#         cursor = connection.cursor()
+#         cursor.execute("select database();")
+#         record = cursor.fetchone()
+#         print("You're connected to database: ", record)
+
+# except Error as e:
+#     print("Error while connecting to MySQL", e)
+
 def create_connection(host_name, user_name, user_passwd, dm_name):
     connection = None
+    # try:
+    #     connection = mysql.connector.connect(host=host_name,
+    #                                          user=user_name,
+    #                                          passwd=user_passwd,
+    #                                           database=dm_name
+    #                                         )
+    #     # print("connection to MySql DB successful")
+    # except Error as e:
+    #     print(f"The error '{e}' occurred")
     
-    try:
-        connection = mysql.connector.connect(host=host_name,
-                                             user=user_name,
-                                             passwd=user_passwd,
-                                              database=dm_name
-                                            )
-        # print("connection to MySql DB successful")
-    except Error as e:
-        print(f"The error '{e}' occurred")
+    db_user = os.environ.get('CLOUD_SQL_USERNAME')
+    # db_password = os.environ.get('CLOUD_SQL_PASSWORD')
+    db_name = os.environ.get('CLOUD_SQL_DATABASE_NAME')
+    db_connection_name = os.environ.get('CLOUD_SQL_CONNECTION_NAME')
     
+       # When deployed to App Engine, the `GAE_ENV` environment variable will be
+    # set to `standard`
+    if os.environ.get('GAE_ENV') == 'standard':
+        # If deployed, use the local socket interface for accessing Cloud SQL
+        unix_socket = '/cloudsql/{}'.format(db_connection_name)
+        connection =  mysql.connector.connect(user=db_user, password=None, unix_socket=unix_socket, db=db_name)
+    else:
+        # If running locally, use the TCP connections instead
+        # Set up Cloud SQL Proxy (cloud.google.com/sql/docs/mysql/sql-proxy)
+        # so that your application can use 127.0.0.1:3306 to connect to your
+        # Cloud SQL instance
+        host = '127.0.0.1'
+        db_user = 'root'
+        db_name = 'checkon'
+        db_connection_name = 'notify-3441:us-central1:checkon'
+        # print(db_user, db_password, host, db_name)
+        connection =  mysql.connector.connect(user=db_user, password=None, host=host, db=db_name)
     return connection
 
 def create_database(connection, query):

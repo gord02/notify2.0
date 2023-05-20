@@ -7,7 +7,8 @@ import sendgrid
 from email.message import EmailMessage
 from sendgrid.helpers.mail import Mail, Email, To, Content
 
-import sqlQueries
+# import sqlQueries
+from logic import sqlQueries
 
 receiver_email = os.getenv('EMAIL')
 # password = os.getenv('PASSWORD')
@@ -117,4 +118,6 @@ def contact(email,name, msg):
     
 # send_email([["Google", "SWE"], ["reddit", "SWE"]])
 
-send_email("Test message")
+# send_email("Test message")
+
+# print(receiver_email,SENDGRID_API_KEY,  sender)
